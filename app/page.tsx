@@ -343,6 +343,13 @@ export default function Home() {
           <button className="primary start" onClick={() => { setStarted(true); requestSensors(); }}>
             <span>탈출 시작</span><b>→</b>
           </button>
+          <div className="qr-access">
+            <img src="./qr-code.png" alt="마지막 종례 게임 접속 QR 코드" />
+            <div>
+              <b>휴대폰으로 플레이</b>
+              <span>카메라로 QR 코드를 스캔하세요</span>
+            </div>
+          </div>
           <p className="sensor-note">◉ 소리와 진동을 켜면 더 몰입할 수 있어요</p>
         </section>
         <div className="hallway"><span /><span /><span /><span /></div>

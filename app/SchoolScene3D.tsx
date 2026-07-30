@@ -211,30 +211,36 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
     dustGeo.setAttribute("position", new THREE.BufferAttribute(points, 3));
     scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xc9f14a, size: .025, opacity: .4, transparent: true })));
 
-    let looking = false, lastX = 0, yaw = 0, pitch = 0, animation = 0, tick = 0;
+    let looking = false, lastX = 0, lastY = 0, yaw = 0, pitch = 0, animation = 0, tick = 0;
     let branchTriggered = false;
     let downX = 0, downY = 0;
+    let activePointerType = "mouse";
+    let activeButton = 0;
     let previousTime = performance.now();
     const keys = new Set<string>();
     const down = (e: PointerEvent) => {
       lastX = downX = e.clientX;
-      downY = e.clientY;
+      lastY = downY = e.clientY;
+      activePointerType = e.pointerType;
+      activeButton = e.button;
       looking = e.button === 2 || e.pointerType === "touch";
       if (looking) renderer.domElement.setPointerCapture(e.pointerId);
     };
     const move = (e: PointerEvent) => {
       if (!looking) return;
       yaw -= (e.clientX - lastX) * .005;
-      pitch = THREE.MathUtils.clamp(pitch + e.movementY * .003, -.32, .32);
+      pitch = THREE.MathUtils.clamp(pitch + (e.clientY - lastY) * .003, -.32, .32);
       lastX = e.clientX;
+      lastY = e.clientY;
     };
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     const up = (event: PointerEvent) => {
       const wasLooking = looking;
       looking = false;
-      if (wasLooking) return;
-      if (Math.hypot(event.clientX - downX, event.clientY - downY) > 9) return;
+      const moved = Math.hypot(event.clientX - downX, event.clientY - downY) > 9;
+      if (wasLooking && (activePointerType !== "touch" || activeButton === 2 || moved)) return;
+      if (moved) return;
       const rect = renderer.domElement.getBoundingClientRect();
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -346,5 +352,5 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
     };
   }, [mode, lightOn, chaseTurn]);
 
-  return <div className="school-3d" ref={mount}><div className="drag-hint"><b>W A S D</b> 이동 · 우클릭+드래그 시점</div></div>;
+  return <div className="school-3d" ref={mount}><div className="drag-hint"><b>W A S D</b> 이동 · 클릭/터치 조사 · 드래그 시점</div></div>;
 }

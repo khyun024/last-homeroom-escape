@@ -528,7 +528,7 @@ export default function Home() {
               </>
             )}
 
-            <div className="scene-label"><b>{rooms[step].label}</b><span>WASD 이동 · 우클릭 시점</span></div>
+            <div className="scene-label"><b>{rooms[step].label}</b><span>클릭/터치 조사 · 드래그 시점</span></div>
           </div>
         )}
 

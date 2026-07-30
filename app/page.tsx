@@ -46,7 +46,7 @@ const puzzles = [
   },
 ];
 
-function MobileControls({ jump = false }: { jump?: boolean }) {
+function MobileControls({ jump = false, interact = true }: { jump?: boolean; interact?: boolean }) {
   const control = (code: string) => ({
     onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -64,6 +64,10 @@ function MobileControls({ jump = false }: { jump?: boolean }) {
         <button {...control("KeyS")} aria-label="뒤로 이동">▼</button>
         <button {...control("KeyD")} aria-label="오른쪽 이동">▶</button>
       </div>
+      {interact && <button className="mobile-interact" onPointerDown={(event) => {
+        event.preventDefault();
+        window.dispatchEvent(new Event("mobile-interact"));
+      }}>조사</button>}
       {jump && <button className="mobile-jump" {...control("Space")}>점프</button>}
     </div>
   );
@@ -367,7 +371,7 @@ export default function Home() {
           <span><strong>W A S D</strong> 이동 · 우클릭+드래그 시점</span>
         </div>
         <div className="home-marker">⌂ 파란 불빛의 집</div>
-        <MobileControls />
+        <MobileControls interact={false} />
       </main>
     );
   }

@@ -214,20 +214,19 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
     let looking = false, lastX = 0, lastY = 0, yaw = 0, pitch = 0, animation = 0, tick = 0;
     let branchTriggered = false;
     let downX = 0, downY = 0;
-    let activePointerType = "mouse";
-    let activeButton = 0;
+    let dragMoved = false;
     let previousTime = performance.now();
     const keys = new Set<string>();
     const down = (e: PointerEvent) => {
       lastX = downX = e.clientX;
       lastY = downY = e.clientY;
-      activePointerType = e.pointerType;
-      activeButton = e.button;
+      dragMoved = false;
       looking = e.button === 2 || e.pointerType === "touch";
       if (looking) renderer.domElement.setPointerCapture(e.pointerId);
     };
     const move = (e: PointerEvent) => {
       if (!looking) return;
+      if (Math.hypot(e.clientX - downX, e.clientY - downY) > 14) dragMoved = true;
       yaw -= (e.clientX - lastX) * .005;
       pitch = THREE.MathUtils.clamp(pitch + (e.clientY - lastY) * .003, -.32, .32);
       lastX = e.clientX;
@@ -235,15 +234,14 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
     };
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
-    const up = (event: PointerEvent) => {
-      const wasLooking = looking;
-      looking = false;
-      const moved = Math.hypot(event.clientX - downX, event.clientY - downY) > 9;
-      if (wasLooking && (activePointerType !== "touch" || activeButton === 2 || moved)) return;
-      if (moved) return;
-      const rect = renderer.domElement.getBoundingClientRect();
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    const investigate = (clientX?: number, clientY?: number) => {
+      if (clientX == null || clientY == null) {
+        pointer.set(0, 0);
+      } else {
+        const rect = renderer.domElement.getBoundingClientRect();
+        pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      }
       raycaster.setFromCamera(pointer, camera);
       const hit = raycaster.intersectObjects(interactive, false)[0];
       if (hit?.object.userData.action) {
@@ -252,6 +250,13 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
         else interactRef.current?.(action);
       }
     };
+    const up = (event: PointerEvent) => {
+      looking = false;
+    };
+    const click = (event: MouseEvent) => {
+      if (event.button === 0 && !dragMoved) investigate(event.clientX, event.clientY);
+    };
+    const mobileInteract = () => investigate();
     let jumpOffset = 0, jumpVelocity = 0;
     const keyDown = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
@@ -265,6 +270,8 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
     renderer.domElement.addEventListener("pointerdown", down);
     renderer.domElement.addEventListener("pointermove", move);
     renderer.domElement.addEventListener("pointerup", up);
+    renderer.domElement.addEventListener("click", click);
+    window.addEventListener("mobile-interact", mobileInteract);
     const blockMenu = (event: MouseEvent) => event.preventDefault();
     renderer.domElement.addEventListener("contextmenu", blockMenu);
     window.addEventListener("keydown", keyDown);
@@ -341,6 +348,8 @@ export function SchoolScene3D({ mode, lightOn = false, chaseTurn = 0, chasePause
       renderer.dispose();
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
+      window.removeEventListener("mobile-interact", mobileInteract);
+      renderer.domElement.removeEventListener("click", click);
       renderer.domElement.removeEventListener("contextmenu", blockMenu);
       scene.traverse((object) => {
         if (object instanceof THREE.Mesh) {

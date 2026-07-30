@@ -101,6 +101,7 @@ button:disabled { cursor:not-allowed; }
   .mobile-dpad button:nth-child(4) { grid-column:3; grid-row:2; }
   .mobile-dpad button:active { background:var(--acid); color:var(--ink); }
   .mobile-jump { position:absolute; right:20px; bottom:135px; width:72px; height:72px; border-radius:50%; border:2px solid #61c1ff; background:rgba(18,92,140,.8); color:white; font-size:11px; font-weight:900; box-shadow:0 0 18px #249cff; pointer-events:auto; touch-action:none; }
+  .mobile-interact { position:absolute; right:22px; bottom:220px; width:66px; height:66px; border-radius:50%; border:2px solid var(--acid); background:rgba(57,76,32,.84); color:white; font-size:11px; font-weight:900; box-shadow:0 0 16px rgba(201,241,74,.55); pointer-events:auto; touch-action:none; }
   .notepad-toggle { bottom:16px; }
 }
 .home-journey { position:absolute; inset:0; overflow:hidden; }

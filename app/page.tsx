@@ -17,7 +17,9 @@ export default function Home() {
     if (saved) setBest(Number(saved));
   }, []);
 
-  function start() {
+  async function start() {
+    const Orientation = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+    try { await Orientation.requestPermission?.(); } catch { /* 좌우 버튼으로 계속 플레이 가능 */ }
     startedAt.current = performance.now();
     setDistance(0);
     setDanger(22);
@@ -48,7 +50,7 @@ export default function Home() {
         <>
           <header className="hud">
             <div className="brand"><i /> GLASS RUN <span>01</span></div>
-            <div className="distance"><small>EXIT</small><b>{Math.max(0, 100 - distance)}m</b></div>
+            <div className="distance"><small>EXIT</small><b>{Math.max(0, 200 - distance)}m</b></div>
           </header>
           <aside className="objective"><span>목표</span> 투명 유리문까지 달려라</aside>
           <div className="threat"><span>추격자 거리</span><i><b style={{ width: `${danger}%` }} /></i></div>
@@ -61,7 +63,7 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <p className="desktop-hint">A · D 또는 ← · → 로 장애물을 피하세요</p>
+          <p className="desktop-hint">PC 우클릭 드래그 · 모바일 기울이기로 조향</p>
           <div className="vignette" />
         </>
       )}
@@ -72,7 +74,7 @@ export default function Home() {
           <h1>유리 복도<br /><em>추격전</em></h1>
           <p className="summary">색색의 기둥 사이를 가르고, 유리벽을 피해<br />복도 끝 투명문까지 살아서 도착하세요.</p>
           <button className="start-button" onClick={start}><span>도망치기</span><b>달리기 시작 →</b></button>
-          <div className="how"><span><b>01</b> 좌우 이동</span><span><b>02</b> 유리벽 회피</span><span><b>03</b> 투명문 탈출</span></div>
+          <div className="how"><span><b>01</b> 마우스·기울기 조향</span><span><b>02</b> 유리벽 회피</span><span><b>03</b> 투명문 탈출</span></div>
           {best !== null && <p className="best">BEST RECORD · {best.toFixed(1)}s</p>}
         </section>
       )}

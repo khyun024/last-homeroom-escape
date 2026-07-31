@@ -2,27 +2,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "마지막 종례 | 모바일 방탈출",
-  description: "휴대폰의 터치, 기울기, 흔들기, 소리와 진동을 활용해 학교를 탈출하세요.",
+  title: "GLASS RUN 01 | 유리 복도 추격전",
+  description: "색색의 기둥과 유리벽 사이를 달려 투명 유리문으로 탈출하는 모바일 추격 게임",
   openGraph: {
-    title: "마지막 종례",
-    description: "휴대폰을 들고 12분 안에 학교를 탈출하세요.",
-    images: [{ url: "/og.png", width: 1744, height: 909, alt: "마지막 종례 모바일 학교 방탈출" }],
+    title: "GLASS RUN 01",
+    description: "유리벽을 피해 복도 끝 투명문까지 달려라.",
+    images: [{ url: "/og.png", width: 1744, height: 909, alt: "GLASS RUN 01 모바일 추격 게임" }],
     locale: "ko_KR",
     type: "website",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "마지막 종례",
-    description: "휴대폰을 들고 12분 안에 학교를 탈출하세요.",
-    images: ["/og.png"],
-  },
+  twitter: { card: "summary_large_image", title: "GLASS RUN 01", description: "유리벽을 피해 복도 끝 투명문까지 달려라.", images: ["/og.png"] },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="ko">
-      <body>{children}</body>
-    </html>
-  );
+  return <html lang="ko"><body>{children}</body></html>;
 }
